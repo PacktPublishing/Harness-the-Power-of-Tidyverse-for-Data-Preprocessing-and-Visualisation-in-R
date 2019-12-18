@@ -1,0 +1,11 @@
+library(tidyverse)
+library(gapminder) ##data about countries
+gapminder
+
+gapminder %>% nest(-country)
+
+d1 = gapminder %>% nest(-country)
+
+d1$data[d1$country == "Belgium"]
+
+d2=gapminder %>% nest(-country, -continent)

@@ -1,0 +1,20 @@
+## 
+
+library(tidyverse)
+
+data(msleep) ## mammal sleep data
+
+m=msleep
+
+m %>% glimpse()
+
+## how many NAs?
+m %>% summarise(count = sum(is.na(sleep_rem)))
+
+### replace NAs of sleep_rem with the mean sleep_rem value
+
+mean(m$sleep_rem,na.rm=TRUE)
+
+m = m %>% 
+  mutate(sleep_rem=replace(sleep_rem,is.na(sleep_rem),mean(sleep_rem,na.rm=TRUE)))
+

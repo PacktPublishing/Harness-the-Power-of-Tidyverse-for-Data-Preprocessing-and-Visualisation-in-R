@@ -1,0 +1,37 @@
+library(tidyverse)
+
+head(iris)
+
+###rename columns in data frame
+
+r = iris %>%
+  rename(petal_w=Petal.Width)
+
+head(r)
+### filter and rename columns
+
+sep=iris %>% 
+  select(sepal_l=Sepal.Length,sepal_w=Sepal.Width,iris_s=Species)
+
+head(sep)
+
+### to lower case
+
+strl = iris %>% select_all(str_to_lower)
+
+head(strl)
+
+### conditional selection 
+
+con1 = iris %>% rename_if(is.numeric,str_to_upper)
+head(con1)
+
+con2 = iris %>% rename_at(vars(starts_with("P")),str_to_lower)
+head(con2)
+
+## row names to column
+
+head(mtcars)
+
+x = mtcars %>% rownames_to_column("model")
+head(x)

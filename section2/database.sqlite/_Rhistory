@@ -1,0 +1,512 @@
+library(tidyverse)
+library(broom)
+library(glmnet)
+y = BostonHousing$medv
+x = BostonHousing %>% select(crim,zn,indus,chas,nox,rm,age,dis,rad,tax,ptratio,b,lstat) %>% data.matrix()
+lambdas = 10^seq(3, -2, by = -.1)#specify a range of lambda
+fit <- glmnet(x, y, alpha = 1, lambda = lambdas) #alpha=1 in lasso
+cv_fit <- cv.glmnet(x, y, alpha = 1, lambda = lambdas)
+plot(cv_fit)
+optlambda <- cv_fit$lambda.min
+optlambda
+y_predicted <- predict(fit, s = optlambda, newx = x)
+sst <- sum(y^2)
+sse <- sum((y_predicted - y)^2)
+rsq <- 1 - sse / sst
+rsq
+data(BostonHousing)
+str(BostonHousing)
+summary(BostonHousing)
+head(BostonHousing)
+library(caret)
+set.seed(99)
+Train = createDataPartition(voice2$label, p=0.75, list=FALSE)
+training = voice2[ Train, ] #75% data for training
+set.seed(99)
+Train = createDataPartition(BostonHousing$medv, p=0.75, list=FALSE)
+training = BostonHousing[ Train, ] #75% data for training
+testing = BostonHousing[ -Train, ] #25% testing
+fit1= train(medv~., data=BostonHousing, method="lm")
+summary(fit1)
+fit2= train(medv~., data=BostonHousing, method="lm",metric="MSE") #fit OLS in caret
+fit2= train(medv~., data=BostonHousing, method="lm",metric="RMSE") #fit OLS in caret
+summary(fit2)
+print(fit2)
+p1=predict(fit2, newdata=testing)
+p=as.data.frame(p1)
+test=as.data.frame(testing$medv)
+y=cbind(test,p)
+colnames(y)=c("medv","Pred")
+cor.test(y$medv,y$Pred)
+head(y)
+library(Metrics)
+rmse(y)
+rmse(y$medv,y$Pred)
+train_control <- trainControl(method="cv", number=10)
+fit1= train(medv~., data=training, method="lm") #fit OLS in caret
+summary(fit1) #see the performance on the training data
+fit2= train(medv~., data=training, method="lm",metric="RMSE") #fit OLS in caret
+print(fit2) #tells us the rmse error
+p1=predict(fit2, newdata=testing)
+p=as.data.frame(p1)
+test=as.data.frame(testing$medv)
+test=as.data.frame(testing$medv) #actual medv values. excluded
+y=cbind(test,p)
+colnames(y)=c("medv","Pred")
+head(y) #df of the actual medv and predicted medv
+cor.test(y$medv,y$Pred) #strong association between the predicted and actual
+library(Metrics)
+rmse(y$medv,y$Pred) #root mean square error
+fit2= train(medv~., data=BostonHousing,trControl=train_control, method="lm",metric="RMSE") #fit
+fit3= train(medv~., data=BostonHousing,trControl=train_control, method="lm",metric="RMSE") #fit
+print(fit3)
+summary(fit3)
+summary(fit3)
+set.seed(999)
+Train = createDataPartition(BostonHousing$medv, p=0.75, list=FALSE)
+training = BostonHousing[ Train, ] #75% data for training
+testing = BostonHousing[ -Train, ] #25% testing
+train_control <- trainControl(method="cv", number=10)
+fit4= train(medv~., data=training,trControl=train_control, method="lm") #fit OLS in caret
+print(fit4)
+p1=predict(fit4, newdata=testing)
+p1=predict(fit4, newdata=testing) #predict on the unseen data
+p=as.data.frame(p1)
+test=as.data.frame(testing$medv) #actual medv values. excluded
+y=cbind(test,p)
+colnames(y)=c("medv","Pred")
+head(y) #df of the actual medv and predicted medv
+cor.test(y$medv,y$Pred) #strong association between the predicted and actual
+library(Metrics)
+rmse(y$medv,y$Pred) #root mean square error
+library(relaimpo)
+fit1=lm(medv~., data = BostonHousing)
+calc.relimp(fit1, type = c("lmg"), rela = TRUE)
+varImp(fit1, scale = FALSE)
+data(BostonHousing)
+str(BostonHousing)
+summary(BostonHousing)
+head(BostonHousing)
+library(caret)
+set.seed(99)
+Train = createDataPartition(BostonHousing$medv, p=0.75, list=FALSE)
+training = BostonHousing[ Train, ] #75% data for training
+testing = BostonHousing[ -Train, ] #25% testing
+fit1= train(medv~., data=training, method="lm") #fit OLS in caret
+summary(fit1) #see the performance on the training data
+fit2= train(medv~., data=training, method="lm",metric="RMSE") #fit OLS in caret
+print(fit2) #tells us the rmse error
+p1=predict(fit2, newdata=testing) #predict medv on the basis of 25% test
+p=as.data.frame(p1)
+test=as.data.frame(testing$medv) #actual medv values. excluded
+y=cbind(test,p)
+colnames(y)=c("medv","Pred")
+head(y) #df of the actual medv and predicted medv
+cor.test(y$medv,y$Pred) #strong association between the predicted and actual
+library(Metrics)
+rmse(y$medv,y$Pred) #root mean square error
+train_control <- trainControl(method="cv", number=10)
+fit3= train(medv~., data=BostonHousing,trControl=train_control, method="lm",metric="RMSE") #fit
+fit3= train(medv~., data=BostonHousing,trControl=train_control, method="lm",metric="RMSE") #fit
+summary(fit3)
+print(fit3)
+set.seed(999)
+Train = createDataPartition(BostonHousing$medv, p=0.75, list=FALSE)
+training = BostonHousing[ Train, ] #75% data for training
+testing = BostonHousing[ -Train, ] #25% testing
+train_control <- trainControl(method="cv", number=10)
+fit4= train(medv~., data=training,trControl=train_control, method="lm") #fit OLS in caret
+print(fit4)
+p1=predict(fit4, newdata=testing) #predict on the unseen data
+p=as.data.frame(p1)
+test=as.data.frame(testing$medv) #actual medv values. excluded
+y=cbind(test,p)
+colnames(y)=c("medv","Pred")
+head(y) #df of the actual medv and predicted medv
+cor.test(y$medv,y$Pred) #strong association between the predicted and actual
+rmse(y$medv,y$Pred) #root mean square error
+data(BostonHousing)
+str(BostonHousing)
+summary(BostonHousing)
+head(BostonHousing)
+library(caret)
+train_control <- trainControl(method="cv", number=10)
+lasso <- train(medv ~., BostonHousing,
+method='lasso',
+preProc=c('scale','center'),
+trControl=train_control)
+lasso
+predict.enet(lasso$finalModel, type='coefficients', s=lasso$bestTune$fraction, mode='fraction')
+lasso <- train(medv ~., BostonHousing,
+method='lasso',
+preProc=c('scale','center'),
+trControl=train_control)
+lasso
+predict.enet(lasso$finalModel, type='coefficients', s=lasso$bestTune$fraction, mode='fraction')
+data(urbanwq)
+head(urbanwq)
+library(hier.part)
+data(urbanwq)
+head(urbanwq)
+library(hier.part)
+head(BostonHousing)
+ncol(BostonHousing)
+x=BostonHousing[,1:13]
+hier.part(BostonHousing$medv,x, fam = "gaussian", gof = "Rsqu")
+x=BostonHousing[,1:12] #predictors
+hier.part(BostonHousing$medv,x, fam = "gaussian", gof = "Rsqu")
+H=hier.part(BostonHousing$medv,x, fam = "gaussian", gof = "Rsqu")
+H$I.perc
+show(H)
+fit1=lm(medv~., data = BostonHousing)
+calc.relimp(fit1, type = c("lmg"), rela = TRUE)
+library(relaimpo) #variable importance in OLS models
+calc.relimp(fit1, type = c("lmg"), rela = TRUE)
+ncol(BostonHousing)
+library(hier.part) #variance partitioning
+H=hier.part(BostonHousing$medv,x, fam = "gaussian", gof = "Rsqu")
+x=BostonHousing[,1:12] #predictors
+H=hier.part(BostonHousing$medv,x, fam = "gaussian", gof = "Rsqu")
+H$I.perc #% independent effects
+fit1=lm(medv~., data = BostonHousing)
+library(caret)
+varImp(fit1, scale = FALSE)
+data(BostonHousing)
+str(BostonHousing)
+summary(BostonHousing)
+head(BostonHousing)
+install.packages("leaps")
+library(leaps)
+regfit <- regsubsets(medv~., data = BostonHousing)
+summary(regfit)
+plot(regfit, scale = "adjr2", main = "Adjusted R^2")
+fit2=lm(medv~lstat, data = BostonHousing)
+summary(fit2)
+fit1=lm(medv~., data = BostonHousing)
+summary(fit1)
+fit2=lm(medv~lstat, data = BostonHousing)
+summary(fit2)
+regfit = regsubsets(medv~., data = BostonHousing)
+summary(regfit) #will fit 8 models by default
+plot(regfit, scale = "adjr2", main = "Adjusted R^2")
+fit2=lm(medv~lstat+rm, data = BostonHousing)
+summary(fit2)
+regfit$rsq
+regfit.summary$rsq
+reg.summary=summary(regfit)
+reg.summary$rsq
+fit1=lm(medv~., data = BostonHousing)
+summary(fit1)
+fit2=lm(medv~lstat, data = BostonHousing)
+summary(fit2)
+fit2=lm(medv~zn, data = BostonHousing)
+summary(fit2)
+regfit = regsubsets(medv~., data = BostonHousing)
+summary(regfit) #will fit 8 models by default
+reg.summary=summary(regfit)
+reg.summary$rsq
+plot(regfit, scale = "adjr2", main = "Adjusted R^2")
+fit2=lm(medv~lstat, data = BostonHousing)
+summary(fit2)
+fit2=lm(medv~lstat+rm, data = BostonHousing)
+summary(fit2)
+library(devtools)
+install_github("ujjwalkarn/xda")
+library(xda)
+data(iris)
+head(iris)
+numSummary(iris)
+charSummary(iris)
+bivariate(iris,'Species','Sepal.Length')
+Plot(iris,'Petal.Length')
+library(xda)
+data(iris)
+head(iris)
+numSummary(iris)
+summary(iris)
+charSummary(iris)
+bivariate(iris,'Species','Sepal.Length')
+Plot(iris,'Petal.Length') #plot petal.lnegth with other numerical
+install.packages("keras")
+library(keras)
+mnist <- dataset_mnist()
+install.packages("drat", repos="https://cran.rstudio.com")
+drat:::addRepo("dmlc")
+install.packages("mxnet")
+library(rgbif)
+occ_count(basisOfRecord='OBSERVATION')
+occ_count(taxonKey=2435099, georeferenced=TRUE)
+head(name_lookup(query = 'Helianthus annuus', rank="species", return = 'data'))
+head(name_lookup(query = 'Helianthus annuus', rank="species", return = 'data',georeferenced=TRUE))
+dataset_suggest(query="Amazon", type="OCCURRENCE")
+key =name_backbone(name='Puma concolor')$speciesKey
+dat <- occ_search(taxonKey=key, return='data', limit=100)
+dat
+gbifmap(dat)
+key =name_backbone(name='hornbill')$speciesKey
+dat <- occ_search(taxonKey=key, return='data', limit=100)
+dat
+gbifmap(dat)
+key =name_backbone(name='Bucerotidae')$speciesKey
+dat <- occ_search(taxonKey=key, return='data', limit=100)
+dat
+gbifmap(dat)
+key =name_backbone(name='Buceros rhinoceros')$speciesKey
+dat <- occ_search(taxonKey=key, return='data', limit=100)
+dat <- occ_search(taxonKey=key, return='data', limit=1000)
+dat
+gbifmap(dat)
+splist <- c('Anorrhinus galeritus', 'Anthracoceros albirostris',
+'Anthracoceros malayanus','Buceros bicornis','Buceros rhinoceros',
+'Rhinoplax vigil','Berenicornis comatus','Aceros corrugatus',
+'Rhyticeros subruficollis','Rhyticeros undulatus')
+keys <- vapply(splist, function(x) name_suggest(x)$key[1], numeric(1),
+USE.NAMES=FALSE)
+dat <- occ_data(keys, limit = 50)
+library("data.table")
+dd <- rbindlist(lapply(dat, function(z) z$data), fill = TRUE,
+use.names = TRUE)
+gbifmap(dd)
+head(dd)
+str(dd)
+occ_count(taxonKey=2476004, georeferenced=TRUE)
+head(name_lookup(query = 'Buceros rhinoceros', rank="species", return = 'data'))
+my_code <- isocodes[grep("MY", isocodes$name), "code"]
+occ_count(country=my_code)
+my_code <- isocodes[grep("Malaysia", isocodes$name), "code"]
+occ_count(country=my_code)
+head(name_lookup(query='Bucerotiformes', rank="order", return="data"))
+write.csv(dd,"F:\\SDM_in R\\hb1.csv")
+occ_count(basisOfRecord='OBSERVATION')
+library(rgbif)
+occ_count(basisOfRecord='OBSERVATION')
+occ_count(taxonKey=2476004, georeferenced=TRUE)
+head(name_lookup(query='Bucerotiformes', rank="order", return="data"))
+head(name_lookup(query = 'Buceros rhinoceros', rank="species", return = 'data'))
+my_code <- isocodes[grep("Malaysia", isocodes$name), "code"]
+occ_count(country=my_code)
+dataset_suggest(query="Amazon", type="OCCURRENCE")
+key =name_backbone(name='Buceros rhinoceros')$speciesKey
+dat <- occ_search(taxonKey=key, return='data', limit=1000)
+dat
+gbifmap(dat) #removes nas and plots the geolocations
+splist <- c('Anorrhinus galeritus', 'Anthracoceros albirostris',
+'Anthracoceros malayanus','Buceros bicornis','Buceros rhinoceros',
+'Rhinoplax vigil','Berenicornis comatus','Aceros corrugatus',
+'Rhyticeros subruficollis','Rhyticeros undulatus')
+keys <- vapply(splist, function(x) name_suggest(x)$key[1], numeric(1),
+USE.NAMES=FALSE)
+dat <- occ_data(keys, limit = 50)
+library("data.table")
+dd <- rbindlist(lapply(dat, function(z) z$data), fill = TRUE,
+use.names = TRUE)
+gbifmap(dd)
+head(dd)
+install.packages("tensorflow")
+library(tensorflow)
+install_tensorflow()
+install_tensorflow()
+install_tensorflow()
+install_tensorflow()
+library(tensorflow)
+install_tensorflow()
+install.packages("tensorflow")
+install.packages("forecast")
+library(forecast)
+install.packages("tibbletime")
+install.packages("ggplot2")
+install.packages("tidyverse")
+install.packages("caret")
+install.packages("e1071")
+install.packages("frbs")
+install.packages("sets")
+install.packages("fugeR")
+install.packages("fuzzyFDR")
+install.packages("dplyr")
+install.packages("spocc")
+library(spocc)
+results = occ(query = 'Rhinoplax vigil', from = 'gbif')
+results
+head(results$gbif)
+results = occ(query = 'Rhinoplax vigil', from = c('ebird', 'gbif'))
+results = occ(query = 'Rhinoplax vigil', from = c('ebird', 'gbif','ecoengine'))
+summary(results)
+results = occ(query = 'Rhinoplax vigil', from = 'gbif',gbifopts = list(georeferenced = TRUE)))
+spp= c("Rhinoplax vigil", "Buceros rhinoceros", "Anthracoceros malayanus")
+res_set = occ(spp, from = c('gbif', 'ecoengine'))
+head(res_set)
+dat = occ(query = spp, from = "gbif", gbifopts = list(georeferenced = TRUE))
+head(dat)
+data = occ2df(dat)
+mapleaflet(data = data, dest = ".")
+install.packages("leaflet")
+library(leaflet)
+mapleaflet(data = data, dest = ".")
+head(data)
+data = occ2df(res_set)
+head(data)
+tail(data)
+spp <- c("Danaus plexippus", "Accipiter striatus", "Pinus contorta")
+dat <- occ(query = spp, from = "gbif", gbifopts = list(georeferenced = TRUE))
+data <- occ2df(dat)
+mapleaflet(data = data, dest = ".")
+spp= c("Rhinoplax vigil", "Buceros rhinoceros", "Anthracoceros malayanus")
+dat <- occ(query = spp, from = 'gbif', gbifopts = list(hasCoordinate=TRUE))
+dat <- occ(query = spp, from = c('gbif', 'ecoengine'), gbifopts = list(hasCoordinate=TRUE))
+head(data)
+dat = occ(query = spp, from ='gbif', gbifopts = list(hasCoordinate=TRUE))
+data = occ2df(dat)#convert to data frame
+head(data)
+library(ggplot2)
+mapggplot(dat)
+plot(dat, cex = 1, pch = 10)
+names(data)
+install.packages("TSA")
+library(TSA)
+library(spocc)
+results = occ(query = 'Rhinoplax vigil', from = 'gbif')
+results
+head(results$gbif)
+results = occ(query = 'Rhinoplax vigil', from = c('ebird', 'gbif','ecoengine'))
+summary(results)
+spp= c("Rhinoplax vigil", "Buceros rhinoceros", "Anthracoceros malayanus")
+res_set = occ(spp, from = c('gbif', 'ecoengine'))
+head(res_set)
+dat = occ(query = spp, from ='gbif', gbifopts = list(hasCoordinate=TRUE))
+data = occ2df(dat)#convert to data frame
+head(data)
+tail(data)
+install.packages("rWBclimate")
+library(rWBclimate)
+library(spocc)
+library(taxize)
+Soug<-gbif("Sorex", "ugyunak", geo=T, removeZeros=T, args=c('originisocountrycode=US', 'originisocountrycode=CA')) #retrieve all occurrences of Sorex ugyunak from the U.S. and Canada
+library(rgbif)
+Soug<-gbif("Sorex", "ugyunak", geo=T, removeZeros=T, args=c('originisocountrycode=US', 'originisocountrycode=CA')) #retrieve all occurrences of Sorex ugyunak from the U.S. and Canada
+key =name_backbone(name='Buceros rhinoceros')$speciesKey
+dat <- occ_search(taxonKey=key, return='data', limit=1000)
+dat
+coordinates(dat) = c("decimalLongitude", "decimalLatitude") #Set coordinates to a Spatial data frame
+library(dismo)
+library(maptools)
+coordinates(dat) = c("decimalLongitude", "decimalLatitude") #Set coordinates to a Spatial data frame
+data(wrld_simpl)
+plot(wrld_simpl, axes=TRUE, col='light green', las=1) #plot points on a world map
+points(dat, col='orange', pch=20, cex=0.75)
+zoom(wrld_simpl, axes=TRUE, las=1, col='light green') #zoom to a specific region
+library(spocc)
+spp= c("Rhinoplax vigil", "Buceros rhinoceros", "Anthracoceros malayanus")
+dat = occ(query = spp, from ='gbif', gbifopts = list(hasCoordinate=TRUE))
+install.packages("mapr")
+library(mapr)
+map_leaflet(dat)
+dat = fixnames(dat)
+map_gist(dat, color = c("#976AAE","#6B944D","#BD5945"))
+library(spocc)
+spp= c("Rhinoplax vigil", "Buceros rhinoceros", "Anthracoceros malayanus")
+dat = occ(query = spp, from ='gbif', gbifopts = list(hasCoordinate=TRUE))
+library(mapr)
+map_leaflet(dat) #leaflet based interactive map
+library(ggplot2)
+map_ggmap(dat)
+install.packages("ggmap")
+library(ggmap)
+map_ggmap(dat)
+map_ggplot(dat, "malaysia")
+map_plot(dat, cex = 1, pch = 10)
+dat
+map_leaflet(dat) #leaflet based interactive map
+map_ggmap(dat) ##ggmap version
+install.packages("NicheMapR")
+install.packages("rJava")
+install.packages("enfa")
+library(maptools)
+data(wrld_simpl)
+file <- paste(system.file(package="dismo"), "/ex/bradypus.csv", sep="")
+bradypus <- read.table(file, header=TRUE, sep=',')
+plot(predictors, 1)
+library(rJava)
+install.packages("rJava")
+library(rJava)
+install.packages(c("NLP", "openNLP", "RWeka", "qdap"))
+install.packages("openNLPmodels.en",
+repos = "http://datacube.wu.ac.at/",
+type = "source")
+library(NLP)
+library(openNLP)
+library(RWeka)
+install.packages("stringr", dependencies = TRUE)
+setwd("F:\\SDM_in R\\Data\\1_Raster data\bioclim_land")
+pa=read.csv("Pres_abs.csv")
+setwd("F:\\SDM_in R\\Data\\1_Raster data\bioclim_land")
+library(RSQLite)
+setwd("F:\\DataMining_R\\3_LectureData")
+system("ls *.db", show=TRUE)
+sqlite    <- dbDriver("SQLite")
+exampledb <- dbConnect(sqlite,"database.db")
+dbListTables(exampledb)
+library(sqldf)
+db <- dbConnect(dbDriver("SQLite"),"../database.sqlite")
+dbListTables(db)
+db <- dbConnect(dbDriver("SQLite"),"../database.sqlite")
+frsql <- dbGetQuery(db, "select id,productid,score,helpfulnessnumerator
+,helpfulnessdenominator from Reviews limit 50")
+setwd("F:\\DataMining_R\\3_LectureData")
+list.files(get.wd(), patt=".db")
+list.files(getwd(), patt=".db")
+path <- system.file("db", "database.sqlite", package = "RSQLite")
+con <- dbConnect(RSQLite::SQLite(), path)
+dbListTables(con)
+dbDisconnect()
+con <- dbConnect(RSQLite::SQLite(), ":memory:")
+dbListTables(con)
+dbWriteTable(con, "mtcars", mtcars)
+dbListTables(con)
+dbListFields(con, "mtcars")
+dbReadTable(con, "mtcars")
+res <- dbSendQuery(con, "SELECT * FROM mtcars WHERE cyl = 4")
+dbFetch(res)
+dbDisconnect(con)
+con <- dbConnect(RSQLite::SQLite(), "../database.sqlite")
+dbListTables(con)
+con <- dbConnect(RSQLite::SQLite(), "../database.db")
+dbListTables(con)
+setwd("F:\\DataMining_R\\3_LectureData\\database.sqlite")
+db <- dbConnect(dbDriver("SQLite"),"../database.sqlite")
+drv = dbDriver("SQLite")
+con = dbConnect(drv, "database.sqlite")
+dbListTables(db)
+install.packages("rjson")
+library(rjson)
+getwd()
+JsonData <- fromJSON(file= "<F:\DataMining_Python\smsCorpus_en_2015.03.09_all.json\smsCorpus_en_2015.03.09_all.json>" )
+JsonData <- fromJSON(file= "<F:/DataMining_Python/smsCorpus_en_2015.03.09_all.json/smsCorpus_en_2015.03.09_all.json>" )
+url="https://en.wikipedia.org/wiki/2016_Summer_Olympics_medal_table"
+install.packages("XML")
+library(XML)
+data_df <- readHTMLTable(url,
+which=1)
+library(XML)
+library(RCurl)
+urldata <- getURL(url)
+data <- readHTMLTable(urldata,
+stringsAsFactors = FALSE)
+head(data)
+x=data$$`2016 Summer Olympics medal table`
+x=data$`2016 Summer Olympics medal table`
+head(x)
+library(httr)
+urldata <- GET(url)
+data <- readHTMLTable(rawToChar(urldata$content),
+stringsAsFactors = FALSE)
+head(data)
+head(data$`NULL`)
+url2=https://en.wikipedia.org/wiki/List_of_World_Heritage_Sites_in_the_United_Kingdom_and_the_British_Overseas_Territories
+u=https://en.wikipedia.org/wiki/List_of_World_Heritage_Sites_in_the_Philippines
+u=https://en.wikipedia.org/wiki/North_Korea_at_the_2016_Summer_Olympics
+u=https:/en.wikipedia.org/wiki/North_Korea_at_the_2016_Summer_Olympics
+url=https://en.wikipedia.org/wiki/2016_Summer_Olympics_medal_table
+library(XML)
+library(RCurl)
+url=https://en.wikipedia.org/wiki/2016_Summer_Olympics_medal_table
+u=https:/en.wikipedia.org/wiki/North_Korea_at_the_2016_Summer_Olympics

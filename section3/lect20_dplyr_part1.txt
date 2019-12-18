@@ -1,0 +1,40 @@
+##################################################################
+####### Intro to dplyr: package for data summarizing 
+
+head(airquality)
+
+library(datasets)
+library(dplyr)
+
+############# Data selection
+
+########## select a few columns by name
+
+selecn=select(airquality,Ozone,Month)
+head(selecn)
+
+########## drop a column
+
+dayd=select(airquality, -Day)
+head(dayd)
+
+############## Data filter
+
+filter(airquality, Ozone > 25)
+
+f=filter(airquality, Ozone > 25 & Temp>75)
+head(f)
+
+######### add a new column
+
+dm=mutate(airquality, TempInC = (Temp - 32) * 5 / 9)
+head(dm)
+
+####### summarize and group by data
+
+summarise(airquality, min(Ozone, na.rm = TRUE)) #mean ozone value
+
+## group: average wind value per month
+## Month is the basis of grouping
+
+summarise(group_by(airquality, Month), mean(Wind, na.rm = TRUE))

@@ -1,0 +1,84 @@
+##############################################################
+
+setwd("~/Desktop/forecast/Data viz_r/Data and Code/section6")
+
+getwd()
+
+library(tidyverse)
+library(ggthemes)
+
+atheletes =read.csv("athlete_events.csv", stringsAsFactors = F)
+
+head(atheletes)
+
+### remove NAs
+
+rem=atheletes %>%
+  filter(Medal != "<NA>") ## retain all data which is not NA
+
+head(rem)
+
+class(rem$Year)
+
+rem$Year = as.factor(rem$Year)
+
+#### Men vs Women performance in the Summer Olympics
+
+s= rem %>% group_by(Year, Sex) %>% 
+  filter(Season=='Summer') %>% 
+  summarize(Count=n()) %>% 
+  arrange(Year)
+
+head(s)
+
+ggplot(s, aes(x=Year, y=Count, group=Sex))+
+  geom_line(aes(color=Sex)) +
+  geom_point(aes(color=Sex)) + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+#### Most popular sports by sex
+
+p= rem %>% group_by(Sport, Sex) %>% 
+  filter(Season=='Summer') %>% 
+  summarize(Count=n()) %>% 
+  group_by(Sex) %>% top_n(10,Sport)
+
+ggplot(p, aes(x=Sport, y=Count, group=Sex)) +
+  geom_col(aes(fill=Sex))+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+#### Medals won by women in 2016
+
+m_2016 = rem %>% filter(Year==2016, Sex=="F") %>%
+  group_by(NOC, Medal) %>%
+  summarize(Count=length(Medal)) 
+
+head(m_2016)
+
+ggplot(m_2016, aes(x=NOC, y=Count, fill=Medal)) +
+  geom_col() +
+  coord_flip() +
+  scale_fill_manual(values=c("gold1","gray70","gold4")) +
+  ggtitle("Medal counts for women at the 2016 Rio Olympics") +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.y = element_text(size=6))
+
+## order by medal counts
+
+l_2016 = m_2016 %>%
+  group_by(NOC) %>%
+  summarize(Total=sum(Count)) %>%
+  arrange(Total) %>%
+  select(NOC)
+
+head(l_2016)
+
+m_2016$NOC = factor(m_2016$NOC, levels=l_2016$NOC)
+
+ggplot(m_2016, aes(x=NOC, y=Count, fill=Medal)) +
+  geom_col() +
+  coord_flip() +
+  scale_fill_manual(values=c("gold1","gray70","gold4")) +
+  ggtitle("Medal counts for women at the 2016 Rio Olympics") +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.y = element_text(size=6))

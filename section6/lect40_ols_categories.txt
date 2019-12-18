@@ -1,0 +1,65 @@
+#############################################################
+
+library(tidyverse)
+library(modelr) ## helps with modelling
+
+
+library(gapminder) ##data about countries
+gapminder
+
+sing = gapminder %>%
+  filter(country == "Singapore")
+
+######### Identify the relationship between lifeExp and gdp
+
+sing_mod <- lm(lifeExp ~ gdpPercap, data = sing)
+
+summary(sing_mod)
+
+sing %>% 
+  ggplot(aes(gdpPercap, lifeExp)) + 
+  geom_line() + 
+  ggtitle("Full data = ")
+
+sing %>% 
+  add_predictions(sing_mod) %>%
+  ggplot(aes(gdpPercap, pred)) + 
+  geom_line() + 
+  ggtitle("Linear trend + ")
+
+sing %>% 
+  add_residuals(sing_mod) %>% 
+  ggplot(aes(gdpPercap, resid)) + 
+  geom_hline(yintercept = 0, colour = "white", size = 3) + 
+  geom_line() + 
+  ggtitle("Remaining pattern")
+
+###################### Implement on other countries
+
+by_cont = gapminder %>% nest(-continent)
+
+by_cont = by_cont %>% 
+  mutate (fit = map(data, ~ lm(lifeExp ~ gdpPercap, data = .)),
+          results = map(fit, glance)) %>% 
+  unnest(results)
+
+by_cont
+
+by_cont%>% 
+  ggplot(aes(x = factor(continent), y = r.squared)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Continent", y = expression(R^{2}))
+
+####### more detailed results
+
+by_cont2 = by_cont %>% 
+  mutate (fit = map(data, ~ lm(lifeExp ~ gdpPercap, data = .)),
+          results = map(fit, augment)) %>% 
+  unnest(results)
+
+by_cont2 %>% 
+  ggplot(aes(x = lifeExp, y = .fitted)) +
+  geom_abline(intercept = 0, slope = 1, alpha = .2) +  # Line of perfect fit
+  geom_point() +
+  facet_grid(continent ~ .) +
+  theme_bw()

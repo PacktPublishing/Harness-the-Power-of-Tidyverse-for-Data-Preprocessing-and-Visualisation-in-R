@@ -1,0 +1,25 @@
+
+
+setwd("/Volumes/Seagate Backup Plus Drive/R_datasc/DataProcess_tidyretc")
+
+df=read.csv("happiness2019.csv")
+
+library(tidyverse)
+
+head(df)
+
+df %>% glimpse()
+
+#### select
+
+df %>% select("SD_Ladder") ##select a column by name
+
+df %>% select(one_of("Social_support","Freedom"))
+
+### drop columns by name
+
+df %>% select(-one_of("Social_support","Freedom"))
+
+df %>% select(starts_with("F"))
+
+df %>% select(ends_with("m"))

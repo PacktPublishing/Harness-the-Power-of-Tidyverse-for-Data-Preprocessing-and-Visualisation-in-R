@@ -1,0 +1,47 @@
+################################################################
+
+library(magrittr)
+library(dplyr)
+
+head(iris)
+
+iris %>% head() ## with a pipe-operator
+
+## tells R to take the value of that which is to the left 
+## and pass it to the right as an argument
+
+## Select Columns
+
+iris %>% select(Species,Petal.Width)
+
+iris %>% select(Species,Petal.Width) ->col2
+
+col2 %>% head()
+
+## Drop a Column
+
+iris %>% select(-Species)
+
+iris %>% select(-Species) %>% head()
+
+## Select a Few Columns
+
+iris %>% select(Sepal.Length:Petal.Length) %>%head()
+
+iris %>% select_if(is.numeric) %>% head()
+
+## Drop a Few Columns
+
+iris %>% select(-(Sepal.Length:Petal.Length)) %>%head()
+
+
+## Select based on column name value
+
+iris %>% select(starts_with("S")) %>% head()
+
+iris %>% select(ends_with("s"))
+
+
+iris %>% select(contains("Width")) %>% head()
+
+iris %>% select(contains("Length")) %>% head()

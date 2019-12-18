@@ -1,0 +1,27 @@
+################################################################
+
+library(tidyverse)
+
+data(msleep) ## mammal sleep data
+
+m=msleep
+
+m %>% glimpse()
+
+m %>% distinct(conservation)
+
+## drop NAs with tidyr
+
+m %>% na.omit() %>% glimpse()
+
+m %>% drop_na()%>% glimpse()
+
+## drop NAs of a row
+m %>% distinct(conservation) ## does the column have NAs?
+### how many NAs
+m %>% summarise(count = sum(is.na(conservation)))
+
+m %>% filter(!is.na(conservation)) %>% glimpse()
+
+m %>% drop_na(conservation)%>% glimpse()
+  

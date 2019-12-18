@@ -1,0 +1,47 @@
+#################################################################
+### JSON-->Javascript Object Notation
+
+setwd("F:\\DataMining_R\\3_LectureData")
+
+library(rjson)
+#name/url of json file
+json_file <- "http://api.worldbank.org/country?per_page=10&region=OED&lendingtype=LNX&format=json"
+
+#json data is stored in json_data
+json_data <- fromJSON(file=json_file)
+
+#you can see that this json file has two objects in the outer most list
+json_data[[1]]
+json_data[[2]]
+
+#you can access any particular object from the json data as shown below
+d3 <- lapply(json_data[[2]], function(x) c(x["id"], x["iso2Code"]))
+
+d3 <- do.call(rbind, d3)
+d3
+d4 <- lapply(json_data[[2]], function(x) c(x["id"], x["iso2Code"], x$region["id"], x$region["value"], x["capitalCity"]))
+d4 <- do.call(rbind, d4)
+d4
+
+#other example
+
+
+json_file <- "skorea.json"
+#json data is stored in json_data
+
+json_data <- fromJSON(file=json_file)
+
+#you can access your data as simply shown below
+json_data[[1]]
+json_data[[2]]
+json_data[[5]]
+
+#or you can extract some usefull data
+d <- lapply(json_data, function(x) c(x['Image'], x['Criteria'], x['Site'], x['Area ha (acre)']))
+d <- do.call(rbind, d)
+d
+
+#you can access any data you want from this table like shown below
+col(d)
+d[,1]
+d[1,]

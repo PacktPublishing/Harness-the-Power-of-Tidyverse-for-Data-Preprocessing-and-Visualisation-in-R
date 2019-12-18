@@ -1,0 +1,26 @@
+#read in the CSV data  UCL website:
+#https://archive.ics.uci.edu/ml/datasets/Wine+Quality
+
+winer1=read.csv("winequality-red.csv",header=T)
+#header= T will read in column names as well
+head(winer1)
+summary(winer1)
+
+winer1=read.csv("winequality-red.csv",header=T,sep=",")
+#header= T will read in column names as well
+head(winer1)
+summary(winer1)
+
+#specify the correct seperator
+winer=read.table("winequality-red.csv",header=T,sep=";")
+#header= T will read in column names as well
+head(winer)
+summary(winer)
+
+##Read in excel data
+#excel
+#summary(boston1)
+library(readxl)
+dfb <- read_excel("boston1.xls")
+head(dfb)
+summary(dfb)

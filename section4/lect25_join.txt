@@ -1,0 +1,47 @@
+library(tidyverse)
+library(nycflights13)
+
+head(flights)
+
+head(weather)
+
+head(planes)
+
+
+flights2 = flights %>% select(year:day, hour, origin,
+                              dest, tailnum, carrier)
+head(flights2)
+
+head(airlines)
+
+
+### Join 2 tables using a common column
+
+x= flights2 %>% left_join(airlines, by="carrier")
+
+head(x)
+
+## name added new
+## left_join keeps all observations of LHS var
+
+head(weather)
+
+y = flights2 %>% left_join(weather)
+
+## join by common col: year, month, day
+
+head(y)
+
+##semi-join: keep all observations in x that match y
+
+topd = flights %>% count(dest, sort=TRUE) %>% head(10)
+head(topd)
+
+flights %>% semi_join(topd) 
+
+##anti-join: drop all observations in x that match y
+## good for discovering mismatch
+## identify flights that don't have a match in planes
+
+flights %>% anti_join(planes, by="tailnum") %>%
+  count(tailnum, sort = TRUE)

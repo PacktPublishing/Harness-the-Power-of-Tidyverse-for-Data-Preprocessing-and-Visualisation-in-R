@@ -1,0 +1,16 @@
+######## group by
+
+library(tidyverse)
+
+data(msleep) ## mammal sleep data
+
+m=msleep
+
+m %>% glimpse()
+
+m %>% group_by(conservation) %>% summarise(n())
+
+m %>% group_by(conservation) %>% summarise (mean_a=mean(awake,na.rm=TRUE))
+
+m %>% group_by(conservation,vore) %>% summarise (mean_a=mean(awake,na.rm=TRUE))
+

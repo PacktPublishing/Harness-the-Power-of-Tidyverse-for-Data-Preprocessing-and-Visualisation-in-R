@@ -1,0 +1,33 @@
+################################################################
+head(airquality)
+
+library(datasets)
+library(dplyr)
+
+head(select(airquality, Ozone, Month))
+
+#airquality %>% select(Ozone, Month) %>% head 
+
+airquality %>% select(Ozone, Temp) %>% head
+
+## data summary
+airquality %>% 
+  summarise(avg = mean(Ozone,na.rm=TRUE), 
+            min = min(Ozone,na.rm=TRUE),
+            max = max(Ozone,na.rm=TRUE),
+            total = n())
+
+##summarize by month
+airquality %>% 
+  group_by(Month) %>% 
+  summarise(mean(Temp, na.rm = TRUE))
+
+##REMOVE the 5th monthand group
+airquality %>% 
+  filter(Month != 5) %>% 
+  group_by(Month) %>% 
+  summarise(mean(Temp, na.rm = TRUE))
+
+airquality %>%
+  select(Month, Ozone, Wind)%>%
+  filter(Wind > 12) %>% head

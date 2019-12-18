@@ -1,0 +1,36 @@
+######## group by
+
+df=read.csv("athlete_events.csv")
+
+library(tidyverse)
+
+head(df)
+
+df %>% glimpse()
+
+s2016=df %>% filter(Year=="2016",Season=="Summer")
+
+s2016 %>% glimpse()
+
+s2016 %>% group_by(Sport) %>%
+   summarise(mean_age=mean(Age))%>% head()
+
+s2016 %>% group_by(Sport) %>%
+  summarise(mean_age=mean(Age),mean_ht=mean(Height,na.rm=T))%>% tail()
+
+###### correlation between quantitative variables
+
+s2016 %>% group_by(Sport) %>%
+  summarise(corrl=cor(Height,Weight)) %>% tail()
+
+
+### arrange data
+s2016 %>% group_by(Sport,Sex) %>%
+  arrange(desc(Age))%>% head()
+
+#compute within groups. If the thing you compute is an 
+#unnamed data.frame, they get row-bound together, 
+#with the grouping variables retained
+
+s2016 %>% group_by(Sport) %>%
+  do(head(., 2))%>% head()

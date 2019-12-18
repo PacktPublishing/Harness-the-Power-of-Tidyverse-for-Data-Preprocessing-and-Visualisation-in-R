@@ -1,0 +1,49 @@
+
+
+setwd("/Volumes/Seagate Backup Plus Drive/R_datasc/DataProcess_tidyretc")
+
+df=read.csv("happiness2019.csv")
+
+library(tidyverse)
+
+head(df)
+
+df %>% glimpse()
+
+#### select
+
+df %>% select("SD_Ladder") ##select a column by name
+
+df %>% select(one_of("Social_support","Freedom"))
+
+### drop columns by name
+
+df %>% select(-one_of("Social_support","Freedom"))
+
+df %>% select(starts_with("F"))
+
+df %>% select(ends_with("m"))
+
+######### more select
+
+#### when I don't have the exact column name
+
+df %>% select(matches("Lad"))
+
+x=c("Ladder","Freedom")##vector
+
+df %>% select(one_of(x))
+
+### select on the basis of data type
+df %>% select_if(is.numeric) %>%glimpse()
+
+## select columns that are not numeric
+df %>% select_if(~!is.numeric(.)) %>%glimpse()
+
+df %>% select_if(~n_distinct(.)<5) %>%glimpse() ## unique values
+
+## renaming
+
+df %>% select(Country=Country_region) %>%glimpse()
+
+### new column name= old name

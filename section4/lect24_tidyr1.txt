@@ -1,0 +1,33 @@
+library(tidyverse)
+##library(tidyr)
+
+head(airquality) ##wide format
+
+### wide to long
+names(airquality) <- tolower(names(airquality))
+
+
+## w__>l : gather
+qty = airquality %>% gather(attribute, value)
+
+head(qty)
+tail(qty)
+
+##select columns
+qty2= airquality %>% gather(attribute, value,ozone:wind)
+head(qty2)
+tail(qty2)
+
+aqg = airquality %>% 
+  gather(variable, value, -month, -day, na.rm = TRUE) 
+
+head(aqg)
+
+## summarize
+
+s=aqg %>% 
+  group_by(month, variable) %>%
+  summarise(value = mean(value)) %>%
+  spread(variable, value) 
+
+head(s)

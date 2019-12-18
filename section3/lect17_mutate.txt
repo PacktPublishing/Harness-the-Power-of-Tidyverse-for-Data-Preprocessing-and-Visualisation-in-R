@@ -1,0 +1,24 @@
+######################################################################
+######## create new variables
+
+
+library(tidyverse)
+
+data(msleep) ## mammal sleep data
+head(msleep)
+
+m=msleep
+
+m %>% glimpse()
+
+### create a new column/var with the name S
+
+## adds the new variable
+m %>% mutate(S=sleep_total+sleep_rem+sleep_cycle) %>% glimpse()
+
+m %>% mutate(S=sleep_total+sleep_rem+sleep_cycle) %>%filter(!is.na(sleep_rem))
+
+m %>% mutate(S=sleep_total+sleep_rem+sleep_cycle) %>%filter(!is.na(sleep_rem),!is.na(sleep_cycle))%>% glimpse()
+
+### create a var and remove the older one
+m %>% transmute(S=sleep_total+sleep_rem+sleep_cycle) %>% glimpse()

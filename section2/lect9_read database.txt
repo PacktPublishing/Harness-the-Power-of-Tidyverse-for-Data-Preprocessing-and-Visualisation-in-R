@@ -1,0 +1,50 @@
+#####Extract data from SQLite database 
+## Database is a collection of tables
+
+library(RSQLite)
+library(DBI)
+
+db = RSQLite::datasetsDb()
+dbListTables(db) #all the tables in the database
+
+dbReadTable(db, "CO2") #read in the CO2 table
+
+## filter the data
+dbGetQuery(db, "SELECT * FROM CO2 WHERE conc < 100")
+
+dbDisconnect(db)
+
+## Amazon food reviews
+
+setwd("F:\\DataMining_R\\3_LectureData\\database.sqlite")
+
+db = dbConnect(dbDriver("SQLite"),"database.sqlite")
+## database.sqlite is where our data are stored
+## connect to this using dbConnect
+
+alltables = dbListTables(db)
+head(alltables)
+
+reviews <- dbGetQuery(db,"select * from Reviews limit 100")
+
+head(reviews)
+
+##ipl database
+setwd("F:\\DataMining_R\\3_LectureData\\ipl\\database.sqlite")
+
+db = dbConnect(dbDriver("SQLite"),"database.sqlite")
+## database.sqlite is where our data are stored
+## connect to this using dbConnect
+
+alltables = dbListTables(db)
+head(alltables)
+
+dbReadTable(db, "Country")
+
+head(dbReadTable(db, "Batsman_Scored"))
+
+x=dbReadTable(db, "Batsman_Scored") #read into variable x
+summary(x)
+str(x)
+
+dbDisconnect(db)

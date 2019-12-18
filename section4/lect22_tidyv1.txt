@@ -1,0 +1,20 @@
+##############################################################
+
+library(tidyverse)
+
+##tidyverse is a coherent system of packages for 
+##data manipulation, exploration and visualization that share a common design philosophy.
+
+### underpinned by tibbles
+
+vignette("tibble")
+
+class(iris)
+
+i=as_tibble(iris)
+
+head(i)
+
+library(nycflights13)
+        
+nycflights13::flights %>% View()

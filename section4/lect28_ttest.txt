@@ -1,0 +1,25 @@
+###### t-test
+
+library(tidyverse)
+library(broom)
+
+head(mtcars)
+
+d <- mtcars %>% 
+  nest(-cyl) %>% 
+  mutate(fit = map(data, ~ t.test(.$mpg)))
+
+d$fit[d$cyl == 4]
+
+
+mtcars %>% 
+  nest(-cyl) %>% 
+  mutate(fit = map(data, ~ t.test(.$mpg)),
+         p   = map_dbl(fit, "p.value"))
+
+## data formatting-- unnest 
+mtcars %>% 
+  nest(-cyl) %>% 
+  mutate(fit = map(data, ~ t.test(.$mpg)),
+         results = map(fit, glance)) %>% 
+  unnest(results)

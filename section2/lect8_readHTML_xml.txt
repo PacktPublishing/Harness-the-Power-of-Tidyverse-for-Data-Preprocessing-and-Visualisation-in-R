@@ -1,0 +1,23 @@
+##################################################################
+######### read in data from HTML tables with XML
+
+library(XML)
+library(RCurl)
+
+url="https://en.wikipedia.org/wiki/2016_Summer_Olympics_medal_table"
+##webpage we are intersted in
+
+urldata <- getURL(url) #get data from this URL
+
+data <- readHTMLTable(urldata,
+                      stringsAsFactors = FALSE)
+#read the hHTML table
+
+#medal tally
+names(data)
+head(data)
+
+x=data$`2016 Summer Olympics medal table`
+
+
+head(x)

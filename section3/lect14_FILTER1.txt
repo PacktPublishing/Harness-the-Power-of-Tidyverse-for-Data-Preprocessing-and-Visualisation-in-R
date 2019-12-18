@@ -1,0 +1,22 @@
+######################################################################
+######### row filtering: subset rows |
+
+library(tidyverse)
+
+data(msleep) ## mammal sleep data
+head(msleep)
+
+m=msleep
+
+m %>% glimpse()
+
+m %>% filter(bodywt >=5) %>% glimpse()
+
+m %>% filter(conservation =="en") %>% glimpse()
+
+## filter on basis of two conditions
+
+m %>% filter(bodywt>=2,conservation =="en") %>% glimpse() ##and
+
+## or
+m %>% filter(order=="Carnivora"|conservation =="en") %>% glimpse()

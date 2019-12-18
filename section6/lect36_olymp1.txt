@@ -1,0 +1,59 @@
+setwd("~/Desktop/forecast/Data viz_r/Data and Code/section7")
+
+getwd()
+
+library(tidyverse)
+library(ggthemes)
+
+atheletes =read.csv("athlete_events.csv", stringsAsFactors = F)
+
+head(atheletes)
+
+### remove NAs
+
+rem=atheletes %>%
+  filter(Medal != "<NA>") ## retain all data which is not NA
+
+head(rem)
+
+class(rem$Year)
+
+rem$Year = as.factor(rem$Year)
+
+### Medals China
+
+china = subset(rem, Team == "China")
+
+head(china)
+
+
+### medal tally/country (from 1896 onwards)
+
+t = rem %>% group_by(Team) %>%
+  summarise(Medal_Tally = length(Medal))%>%
+  arrange(desc(Medal_Tally))
+
+head(t)
+
+t %>%top_n(12) %>% ggplot(aes(x = Team,y = Medal_Tally)) +
+  geom_bar(stat='identity',colour="white", fill = "red")+
+  theme_wsj()
+
+### Medal tally of countries, per year
+
+mt = rem %>% 
+  group_by(Team,Year) %>%
+  summarise(Total = n())
+
+head(mt)
+
+## medal tally of a few countries across the years
+topm = mt %>% filter(Team %in% c("USA","Russia","Germany","France","China"))
+head(topm)
+
+topm %>%
+  ggplot(aes(x = Year, y = Total, group = Team)) +
+  geom_line(aes(color = Team)) +
+  geom_point(aes(color = Team)) +theme_economist()+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+##flip the x labels
